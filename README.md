@@ -5,6 +5,7 @@ A powerful CLI tool for Scrypto development on Radix DLT. Deploy packages, gener
 ## Features
 
 - 🚀 **Package Deployment**: Deploy `.wasm` and `.rpd` files to Radix networks
+- 📝 **Transaction Manifests**: Submit `.rtm` manifest files for custom transactions
 - 🔑 **Account Management**: Create, import, and manage Radix accounts
 - 🌐 **Network Support**: Works with both Stokenet (testnet) and Mainnet
 - 💰 **Faucet Integration**: Request test tokens on Stokenet
@@ -76,6 +77,8 @@ npm install -g scrypto-dev
 ### Development Tools
 - `scrypto-dev deploy` - Deploy package from current directory
 - `scrypto-dev generate-types <package-address>` - Generate TypeScript types
+- `scrypto-dev submit <file-path.rtm>` - Submit transaction manifest file
+- `scrypto-dev create-manifest [template]` - Create manifest template (basic/faucet)
 
 ## Package Deployment
 
@@ -132,13 +135,17 @@ MIT License - see LICENSE file for details
 ## Support
 
 - Report issues: [GitHub Issues](https://github.com/yourusername/scrypto-dev-cli/issues)
-- Documentation: [Deployment Guide](DEPLOY_USAGE.md)
+- Documentation: 
+  - [Deployment Guide](DEPLOY_USAGE.md)
+  - [Manifest Usage Guide](MANIFEST_USAGE.md)
 
 ## Changelog
 
 ### v1.0.0
 - Initial release
 - Package deployment functionality
+- Transaction manifest submission
+- Manifest template generation
 - Account management
 - Network configuration
 - Type generation

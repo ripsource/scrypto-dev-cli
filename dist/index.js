@@ -11,6 +11,8 @@ const set_address_1 = require("./commands/set-address");
 const deploy_1 = require("./commands/deploy");
 const generate_types_1 = require("./commands/generate-types");
 const faucet_1 = require("./commands/faucet");
+const submit_1 = require("./commands/submit");
+const create_manifest_1 = require("./commands/create-manifest");
 const set_env_1 = require("./commands/set-env");
 const show_env_1 = require("./commands/show-env");
 const generate_mnemonic_1 = require("./commands/generate-mnemonic");
@@ -86,5 +88,15 @@ program
     .command("faucet")
     .description("Request tokens from faucet")
     .action(faucet_1.faucet);
+program
+    .command("submit")
+    .description("Submit a transaction manifest file (.rtm)")
+    .argument("<file-path>", "Path to .rtm manifest file")
+    .action(submit_1.submit);
+program
+    .command("create-manifest")
+    .description("Create a transaction manifest template")
+    .argument("[template]", "Template type: basic, faucet", "basic")
+    .action(create_manifest_1.createManifest);
 program.parse();
 //# sourceMappingURL=index.js.map

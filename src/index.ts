@@ -10,6 +10,8 @@ import { setAddress } from "./commands/set-address";
 import { deploy } from "./commands/deploy";
 import { generateTypes } from "./commands/generate-types";
 import { faucet } from "./commands/faucet";
+import { submit } from "./commands/submit";
+import { createManifest } from "./commands/create-manifest";
 import { setEnv } from "./commands/set-env";
 import { showEnv } from "./commands/show-env";
 import { generateMnemonicCommand } from "./commands/generate-mnemonic";
@@ -100,5 +102,17 @@ program
   .command("faucet")
   .description("Request tokens from faucet")
   .action(faucet);
+
+program
+  .command("submit")
+  .description("Submit a transaction manifest file (.rtm)")
+  .argument("<file-path>", "Path to .rtm manifest file")
+  .action(submit);
+
+program
+  .command("create-manifest")
+  .description("Create a transaction manifest template")
+  .argument("[template]", "Template type: basic, faucet", "basic")
+  .action(createManifest);
 
 program.parse();

@@ -41,6 +41,7 @@
     "dist/**/*",
     "README.md",
     "DEPLOY_USAGE.md",
+    "MANIFEST_USAGE.md",
     "LICENSE"
   ],
   "dependencies": {

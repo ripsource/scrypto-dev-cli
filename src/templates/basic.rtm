@@ -1,0 +1,20 @@
+CALL_METHOD
+    Address("{ACCOUNT}")
+    "lock_fee"
+    Decimal("500")
+;
+
+# Add your transaction instructions here
+# Example: Call a component method
+# CALL_METHOD
+#     Address("component_address_here")
+#     "method_name"
+#     "argument1"
+#     Decimal("123.45")
+# ;
+
+CALL_METHOD
+    Address("{ACCOUNT}")
+    "deposit_batch"
+    Expression("ENTIRE_WORKTOP")
+;
