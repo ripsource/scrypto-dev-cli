@@ -37,9 +37,10 @@ exports.generateTypes = generateTypes;
 const child_process_1 = require("child_process");
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+const binary_helper_1 = require("../utils/binary-helper");
 function generateTypes(packageAddress) {
-    console.log("Generating types...");
-    console.log("Package address:", packageAddress);
+    console.log("🔧 Generating types...");
+    console.log("📦 Package address:", packageAddress);
     // Detect network from package address
     let network;
     if (packageAddress.startsWith("package_rdx")) {
@@ -49,64 +50,58 @@ function generateTypes(packageAddress) {
         network = "stokenet";
     }
     else {
-        console.error("Error: Invalid package address format. Expected package_rdx (mainnet) or package_tdx_2 (stokenet)");
+        console.error("❌ Invalid package address format. Expected package_rdx (mainnet) or package_tdx_2 (stokenet)");
         return;
     }
-    console.log(`Detected network: ${network}`);
+    console.log(`🌐 Network: ${network}`);
+    // Check if schema-gen binary is available
+    if (!(0, binary_helper_1.checkBinaryAvailable)("schema-gen-cli")) {
+        console.error("❌ Schema generation binary not found for your platform.");
+        console.error("This could be due to:");
+        console.error("  - Unsupported platform");
+        console.error("  - Missing precompiled binary");
+        console.error("  - Installation issue");
+        console.error("");
+        console.error("💡 Alternative: Use the online type generator at:");
+        console.error("   https://www.8arms1goal.com/sbor-ez-mode-ez-mode");
+        console.error(`   Package address: ${packageAddress}`);
+        return;
+    }
     try {
         // Ensure types directory exists
         const typesDir = path.join(process.cwd(), "types");
         if (!fs.existsSync(typesDir)) {
             fs.mkdirSync(typesDir, { recursive: true });
-            console.log("Created types directory");
+            console.log("📁 Created types directory");
         }
-        // Path to the schema-gen binary
-        const schemaGenBinary = path.join(__dirname, "../../schema-gen/target/release/schema-gen-cli");
-        // Check if binary exists, if not try to build it
-        if (!fs.existsSync(schemaGenBinary)) {
-            console.log("Schema generation binary not found. Building...");
-            try {
-                const schemaGenDir = path.join(__dirname, "../../schema-gen");
-                (0, child_process_1.execSync)("cargo build --release", {
-                    cwd: schemaGenDir,
-                    stdio: "inherit",
-                });
-            }
-            catch (buildError) {
-                console.error("❌ Failed to build schema generation binary:");
-                console.error(buildError);
-                console.error("\nPlease ensure you have Rust installed and try:");
-                console.error("  cd schema-gen && cargo build --release");
-                return;
-            }
-        }
+        // Get the binary path for current platform
+        const schemaGenBinary = (0, binary_helper_1.getBinaryPath)("schema-gen-cli");
+        console.log("⚡ Generating TypeScript types...");
         // Execute the schema generation
-        console.log("Generating TypeScript types...");
-        const result = (0, child_process_1.execSync)(`${schemaGenBinary} ${packageAddress}`, {
+        const result = (0, child_process_1.execSync)(`"${schemaGenBinary}" ${packageAddress}`, {
             encoding: "utf8",
             stdio: ["pipe", "pipe", "inherit"],
         });
         // Write to types/blueprint-types.ts
         const outputPath = path.join(typesDir, "blueprint-types.ts");
         fs.writeFileSync(outputPath, result);
-        console.log(`✅ Types generated successfully at: ${outputPath}`);
-        console.log(`📄 Generated ${result.split("\n").length} lines of TypeScript types`);
+        console.log(`✅ Types generated successfully!`);
+        console.log(`📄 Output: ${outputPath}`);
+        console.log(`📊 Generated ${result.split("\n").length} lines of TypeScript`);
         // Basic validation that the output contains TypeScript constructs
         if (result.includes("const ") && result.includes("s.struct(")) {
-            console.log("✅ Generated types appear to be valid");
+            console.log("✨ Generated types appear to be valid");
         }
         else {
-            console.log("⚠️  Generated types may be incomplete or invalid");
+            console.log("⚠️  Generated types may be incomplete - please review the output");
         }
     }
     catch (error) {
-        console.error("Error generating types:", error);
-        // If the binary doesn't exist, provide helpful error message
-        if (error instanceof Error && error.message.includes("ENOENT")) {
-            console.error("\n❌ Schema generation binary not found.");
-            console.error("Please make sure the schema-gen Rust project is built:");
-            console.error("  cd schema-gen && cargo build --release");
-        }
+        console.error("❌ Type generation failed:", error);
+        console.error("");
+        console.error("💡 Alternative: Use the online type generator at:");
+        console.error("   https://www.8arms1goal.com/sbor-ez-mode-ez-mode");
+        console.error(`   Package address: ${packageAddress}`);
     }
 }
 //# sourceMappingURL=generate-types.js.map
