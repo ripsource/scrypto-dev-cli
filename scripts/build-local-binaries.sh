@@ -43,18 +43,18 @@ cd ..
 # Copy schema-gen binary
 cp schema-gen/target/$TARGET/release/schema-gen-cli$BINARY_EXT dist/binaries/$TARGET/
 
-# Build wallet-cli
+# Build wallet-cli (from workspace root)
 echo "👛 Building wallet-cli..."
-cd wallet-compatible-derivation-main/crates/wallet_compatible_derivation_cli
-cargo build --release --target $TARGET
+cd wallet-compatible-derivation-main
+cargo build --release --target $TARGET --bin wallet_compatible_derivation_cli
 if [ $? -ne 0 ]; then
     echo "❌ Failed to build wallet-cli"
     exit 1
 fi
-cd ../../..
+cd ..
 
 # Copy wallet-cli binary (rename from wallet_compatible_derivation_cli)
-cp wallet-compatible-derivation-main/crates/wallet_compatible_derivation_cli/target/$TARGET/release/wallet_compatible_derivation_cli$BINARY_EXT dist/binaries/$TARGET/wallet-cli$BINARY_EXT
+cp wallet-compatible-derivation-main/target/$TARGET/release/wallet_compatible_derivation_cli$BINARY_EXT dist/binaries/$TARGET/wallet-cli$BINARY_EXT
 
 echo "✅ Binaries built successfully!"
 echo "📁 Location: dist/binaries/$TARGET/"

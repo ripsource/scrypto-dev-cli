@@ -29,6 +29,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        # Use shorter path on Windows
+        path: ${{ matrix.os == 'windows-latest' && 'src' || '.' }}
+
+    - name: Enable long paths on Windows
+      if: matrix.os == 'windows-latest'
+      run: |
+        # Enable long paths in git
+        git config --system core.longpaths true
+        
+        # Enable long paths in Windows registry (requires admin)
+        New-ItemProperty -Path "HKLM:SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
+        
+        # Set environment variables for Cargo
+        echo "CARGO_HTTP_MULTIPLEXING=false" >> $env:GITHUB_ENV
+        echo "CARGO_NET_GIT_FETCH_WITH_CLI=true" >> $env:GITHUB_ENV
+        
+        # Use shorter cargo home directory to reduce path lengths
+        New-Item -Path "C:\c" -ItemType Directory -Force
+        echo "CARGO_HOME=C:\c" >> $env:GITHUB_ENV
+      shell: powershell
 
     - name: Install Rust
       uses: actions-rs/toolchain@v1

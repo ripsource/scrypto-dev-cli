@@ -1,0 +1,91 @@
+name: Debug Windows Build
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  debug-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Enable long paths and debug
+      run: |
+        # Enable long paths in git
+        git config --system core.longpaths true
+        
+        # Try to enable long paths in Windows registry
+        try {
+          New-ItemProperty -Path "HKLM:SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
+          Write-Host "✅ Long paths enabled in registry"
+        } catch {
+          Write-Host "⚠️ Could not enable long paths in registry: $($_.Exception.Message)"
+        }
+        
+        # Set environment variables for Cargo  
+        echo "CARGO_HTTP_MULTIPLEXING=false" >> $env:GITHUB_ENV
+        echo "CARGO_NET_GIT_FETCH_WITH_CLI=true" >> $env:GITHUB_ENV
+        
+        # Use shorter cargo home directory
+        New-Item -Path "C:\c" -ItemType Directory -Force
+        echo "CARGO_HOME=C:\c" >> $env:GITHUB_ENV
+        
+        # Debug path lengths
+        Write-Host "📁 Current directory: $(Get-Location)"
+        Write-Host "📏 Path length: $((Get-Location).Path.Length)"
+        Write-Host "🏠 USERPROFILE: $env:USERPROFILE"
+        Write-Host "📦 CARGO_HOME will be: C:\c"
+      shell: powershell
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: x86_64-pc-windows-msvc
+        override: true
+
+    - name: Debug Rust setup
+      run: |
+        Write-Host "🦀 Rust version:"
+        cargo --version
+        rustc --version
+        
+        Write-Host "🎯 Rust targets:"
+        rustup target list --installed
+        
+        Write-Host "📁 Cargo directories:"
+        Write-Host "CARGO_HOME: $env:CARGO_HOME"
+        if (Test-Path $env:CARGO_HOME) {
+          Write-Host "CARGO_HOME exists: ✅"
+        } else {
+          Write-Host "CARGO_HOME missing: ❌"
+        }
+      shell: powershell
+
+    - name: Test schema-gen dependency fetch only
+      working-directory: schema-gen
+      run: |
+        Write-Host "📁 Schema-gen directory: $(Get-Location)"
+        Write-Host "📏 Path length: $((Get-Location).Path.Length)"
+        
+        Write-Host "📋 Cargo.toml content:"
+        Get-Content Cargo.toml | Select-Object -First 10
+        
+        Write-Host "🔄 Attempting to fetch dependencies..."
+        try {
+          cargo fetch --target x86_64-pc-windows-msvc
+          Write-Host "✅ Dependencies fetched successfully"
+        } catch {
+          Write-Host "❌ Dependency fetch failed: $($_.Exception.Message)"
+          exit 1
+        }
+      shell: powershell
+
+    - name: Test minimal build
+      working-directory: schema-gen
+      run: |
+        Write-Host "🔨 Attempting minimal build..."
+        cargo build --target x86_64-pc-windows-msvc --verbose
+      shell: powershell

@@ -13,6 +13,7 @@ const generate_types_1 = require("./commands/generate-types");
 const faucet_1 = require("./commands/faucet");
 const submit_1 = require("./commands/submit");
 const create_manifest_1 = require("./commands/create-manifest");
+const test_binaries_1 = require("./commands/test-binaries");
 const set_env_1 = require("./commands/set-env");
 const show_env_1 = require("./commands/show-env");
 const generate_mnemonic_1 = require("./commands/generate-mnemonic");
@@ -98,5 +99,9 @@ program
     .description("Create a transaction manifest template")
     .argument("[template]", "Template type: basic, faucet", "basic")
     .action(create_manifest_1.createManifest);
+program
+    .command("test-binaries")
+    .description("Test precompiled binary availability and functionality")
+    .action(test_binaries_1.testBinaries);
 program.parse();
 //# sourceMappingURL=index.js.map
