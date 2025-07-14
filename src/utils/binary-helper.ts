@@ -49,19 +49,20 @@ export function getBinaryPath(binaryName: string): string {
     return distBinaryPath;
   }
 
-  // Fallback: try development build location
-  const devBinaryPath = path.join(
-    __dirname,
-    '..',
-    '..',
-    'schema-gen',
-    'target',
-    'release',
-    `${binaryName}${binaryExtension}`
-  );
+  // Fallback: try development build locations
+  const devPaths = [
+    // schema-gen binary
+    path.join(__dirname, '..', '..', 'schema-gen', 'target', 'release', `${binaryName}${binaryExtension}`),
+    path.join(__dirname, '..', '..', 'schema-gen', 'target', target, 'release', `${binaryName}${binaryExtension}`),
+    // wallet-cli binary
+    path.join(__dirname, '..', '..', 'wallet-compatible-derivation-main', 'crates', 'wallet_compatible_derivation_cli', 'target', 'release', `${binaryName}${binaryExtension}`),
+    path.join(__dirname, '..', '..', 'wallet-compatible-derivation-main', 'crates', 'wallet_compatible_derivation_cli', 'target', target, 'release', `${binaryName}${binaryExtension}`)
+  ];
 
-  if (fs.existsSync(devBinaryPath)) {
-    return devBinaryPath;
+  for (const devPath of devPaths) {
+    if (fs.existsSync(devPath)) {
+      return devPath;
+    }
   }
 
   throw new Error(`Binary not found: ${binaryName} for platform ${target}`);

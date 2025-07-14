@@ -8,11 +8,13 @@ if [[ "$OSTYPE" == "linux-gnu"* ]]; then
     TARGET="x86_64-unknown-linux-gnu"
     BINARY_EXT=""
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-    # Check if we're on Apple Silicon
+    # Check if we're on Apple Silicon (M1, M2, M3, etc.)
     if [[ $(uname -m) == "arm64" ]]; then
         TARGET="aarch64-apple-darwin"
+        echo "🍎 Detected Apple Silicon (M1/M2/M3)"
     else
         TARGET="x86_64-apple-darwin"
+        echo "🍎 Detected Intel Mac"
     fi
     BINARY_EXT=""
 elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
@@ -51,7 +53,7 @@ if [ $? -ne 0 ]; then
 fi
 cd ../../..
 
-# Copy wallet-cli binary
+# Copy wallet-cli binary (rename from wallet_compatible_derivation_cli)
 cp wallet-compatible-derivation-main/crates/wallet_compatible_derivation_cli/target/$TARGET/release/wallet_compatible_derivation_cli$BINARY_EXT dist/binaries/$TARGET/wallet-cli$BINARY_EXT
 
 echo "✅ Binaries built successfully!"

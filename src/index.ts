@@ -12,6 +12,7 @@ import { generateTypes } from "./commands/generate-types";
 import { faucet } from "./commands/faucet";
 import { submit } from "./commands/submit";
 import { createManifest } from "./commands/create-manifest";
+import { testBinaries } from "./commands/test-binaries";
 import { setEnv } from "./commands/set-env";
 import { showEnv } from "./commands/show-env";
 import { generateMnemonicCommand } from "./commands/generate-mnemonic";
@@ -114,5 +115,10 @@ program
   .description("Create a transaction manifest template")
   .argument("[template]", "Template type: basic, faucet", "basic")
   .action(createManifest);
+
+program
+  .command("test-binaries")
+  .description("Test precompiled binary availability and functionality")
+  .action(testBinaries);
 
 program.parse();
