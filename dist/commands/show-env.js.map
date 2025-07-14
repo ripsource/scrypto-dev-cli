@@ -1,0 +1,1 @@
+{"version":3,"file":"show-env.js","sourceRoot":"","sources":["../../src/commands/show-env.ts"],"names":[],"mappings":";;AAEA,0BAQC;AAVD,sDAAyD;AAEzD,SAAgB,OAAO;IACrB,MAAM,OAAO,GAAG,IAAA,+BAAiB,GAAE,CAAC;IAEpC,IAAI,OAAO,EAAE,CAAC;QACZ,OAAO,CAAC,GAAG,CAAC,wBAAwB,OAAO,EAAE,CAAC,CAAC;IACjD,CAAC;SAAM,CAAC;QACN,OAAO,CAAC,GAAG,CAAC,qEAAqE,CAAC,CAAC;IACrF,CAAC;AACH,CAAC"}

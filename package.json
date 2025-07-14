@@ -1,0 +1,57 @@
+{
+  "name": "scrypto-dev",
+  "version": "1.0.0",
+  "description": "CLI tool for Scrypto development on Radix DLT - deploy packages, generate types, manage accounts, and more",
+  "main": "dist/index.js",
+  "bin": {
+    "scrypto-dev": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "scrypto",
+    "radix",
+    "cli",
+    "blockchain",
+    "radix-dlt",
+    "defi",
+    "smart-contracts",
+    "package-deployment",
+    "web3",
+    "dapp"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/scrypto-dev-cli.git"
+  },
+  "homepage": "https://github.com/yourusername/scrypto-dev-cli#readme",
+  "bugs": {
+    "url": "https://github.com/yourusername/scrypto-dev-cli/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "DEPLOY_USAGE.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "@radixdlt/radix-engine-toolkit": "^1.0.5",
+    "@radixdlt/babylon-gateway-api-sdk": "^1.4.0",
+    "@rippy/gateway-ez-mode": "^9.6.9",
+    "commander": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  }
+}

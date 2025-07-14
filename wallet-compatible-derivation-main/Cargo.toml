@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/wallet_compatible_derivation",
+    "crates/wallet_compatible_derivation_cli",
+]
+
+[workspace.dependencies]
+thiserror = { version = "1.0.56" }
+zeroize = { version = "1.7.0", features = ["zeroize_derive", "derive"] }
+
