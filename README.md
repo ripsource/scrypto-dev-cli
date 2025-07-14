@@ -118,7 +118,9 @@ Always test thoroughly on Stokenet before deploying to Mainnet!
 
 - Node.js 18+ 
 - npm or yarn
-- Rust and Scrypto toolchain (for building packages)
+- Rust and Scrypto toolchain (for building Scrypto packages)
+
+**Note**: Type generation works out of the box with precompiled binaries - no Rust installation required!
 
 ## Contributing
 
@@ -138,6 +140,7 @@ MIT License - see LICENSE file for details
 - Documentation: 
   - [Deployment Guide](DEPLOY_USAGE.md)
   - [Manifest Usage Guide](MANIFEST_USAGE.md)
+  - [Binary Publishing Guide](BINARY_PUBLISHING_GUIDE.md)
 
 ## Changelog
 

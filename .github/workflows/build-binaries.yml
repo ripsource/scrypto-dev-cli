@@ -1,0 +1,121 @@
+name: Build Binaries
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ created ]
+
+jobs:
+  build-binaries:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            binary_suffix: ""
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            binary_suffix: ".exe"
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            binary_suffix: ""
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            binary_suffix: ""
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        target: ${{ matrix.target }}
+        override: true
+
+    - name: Build schema-gen
+      working-directory: schema-gen
+      run: |
+        cargo build --release --target ${{ matrix.target }}
+
+    - name: Build wallet-cli
+      working-directory: wallet-compatible-derivation-main/crates/wallet_compatible_derivation_cli
+      run: |
+        cargo build --release --target ${{ matrix.target }}
+
+    - name: Create binaries directory
+      run: mkdir -p binaries/${{ matrix.target }}
+
+    - name: Copy schema-gen binary (Unix)
+      if: matrix.os != 'windows-latest'
+      run: |
+        cp schema-gen/target/${{ matrix.target }}/release/schema-gen-cli binaries/${{ matrix.target }}/schema-gen-cli${{ matrix.binary_suffix }}
+
+    - name: Copy schema-gen binary (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        copy schema-gen\target\${{ matrix.target }}\release\schema-gen-cli.exe binaries\${{ matrix.target }}\schema-gen-cli.exe
+
+    - name: Copy wallet-cli binary (Unix)
+      if: matrix.os != 'windows-latest'
+      run: |
+        cp wallet-compatible-derivation-main/crates/wallet_compatible_derivation_cli/target/${{ matrix.target }}/release/wallet_compatible_derivation_cli binaries/${{ matrix.target }}/wallet-cli${{ matrix.binary_suffix }}
+
+    - name: Copy wallet-cli binary (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        copy wallet-compatible-derivation-main\crates\wallet_compatible_derivation_cli\target\${{ matrix.target }}\release\wallet_compatible_derivation_cli.exe binaries\${{ matrix.target }}\wallet-cli.exe
+
+    - name: Upload binaries
+      uses: actions/upload-artifact@v4
+      with:
+        name: binaries-${{ matrix.target }}
+        path: binaries/${{ matrix.target }}/
+
+  package:
+    needs: build-binaries
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Download all binaries
+      uses: actions/download-artifact@v4
+      with:
+        path: binaries
+
+    - name: Organize binaries
+      run: |
+        mkdir -p dist/binaries
+        # Move all platform binaries to dist/binaries
+        find binaries -name "binaries-*" -type d | while read dir; do
+          platform=$(basename "$dir" | sed 's/binaries-//')
+          mkdir -p "dist/binaries/$platform"
+          cp -r "$dir"/* "dist/binaries/$platform/"
+        done
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build TypeScript
+      run: npm run build
+
+    - name: Upload package artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: npm-package
+        path: |
+          dist/
+          package.json
+          README.md
+          DEPLOY_USAGE.md
+          MANIFEST_USAGE.md
+          LICENSE

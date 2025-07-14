@@ -8,6 +8,10 @@
   },
   "scripts": {
     "build": "tsc",
+    "build:binaries": "npm run build:schema-gen && npm run build:wallet-cli",
+    "build:binaries:local": "chmod +x scripts/build-local-binaries.sh && ./scripts/build-local-binaries.sh",
+    "build:schema-gen": "cd schema-gen && cargo build --release",
+    "build:wallet-cli": "cd wallet-compatible-derivation-main/crates/wallet_compatible_derivation_cli && cargo build --release",
     "dev": "ts-node src/index.ts",
     "start": "node dist/index.js",
     "prepublishOnly": "npm run build"
@@ -39,6 +43,7 @@
   },
   "files": [
     "dist/**/*",
+    "dist/binaries/**/*",
     "README.md",
     "DEPLOY_USAGE.md",
     "MANIFEST_USAGE.md",
