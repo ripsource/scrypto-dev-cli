@@ -1,6 +1,6 @@
 {
   "name": "scrypto-dev",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "CLI tool for Scrypto development on Radix DLT - deploy packages, generate types, manage accounts, and more",
   "main": "dist/index.js",
   "bin": {
